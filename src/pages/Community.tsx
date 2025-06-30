@@ -22,8 +22,8 @@ interface Recipe {
   user_id: string;
   created_at: string;
   profiles?: {
-    full_name: string;
-  };
+    full_name: string | null;
+  } | null;
 }
 
 const Community = () => {
