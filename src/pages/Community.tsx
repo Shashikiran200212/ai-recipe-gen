@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,9 +20,6 @@ interface Recipe {
   cuisine?: string;
   user_id: string;
   created_at: string;
-  profiles?: {
-    full_name: string | null;
-  } | null;
 }
 
 const Community = () => {
@@ -47,12 +43,7 @@ const Community = () => {
     try {
       const { data, error } = await supabase
         .from('recipes')
-        .select(`
-          *,
-          profiles (
-            full_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -197,7 +188,7 @@ const Community = () => {
                 </div>
                 <CardHeader>
                   <CardTitle className="text-lg">{recipe.title}</CardTitle>
-                  <p className="text-sm text-gray-500">by {recipe.profiles?.full_name || 'Anonymous Chef'}</p>
+                  <p className="text-sm text-gray-500">by Anonymous Chef</p>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-1 mb-3">
@@ -239,7 +230,7 @@ const Community = () => {
                       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="text-2xl">{recipe.title}</DialogTitle>
-                          <p className="text-gray-600">by {recipe.profiles?.full_name || 'Anonymous Chef'}</p>
+                          <p className="text-gray-600">by Anonymous Chef</p>
                         </DialogHeader>
                         <div className="space-y-6">
                           <div className="flex gap-4 text-sm text-gray-600">
