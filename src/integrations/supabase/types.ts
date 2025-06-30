@@ -101,6 +101,77 @@ export type Database = {
         }
         Relationships: []
       }
+      recipes: {
+        Row: {
+          cook_time: string | null
+          created_at: string
+          cuisine: string | null
+          difficulty: string | null
+          id: string
+          ingredients: string[]
+          instructions: string[]
+          servings: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cook_time?: string | null
+          created_at?: string
+          cuisine?: string | null
+          difficulty?: string | null
+          id?: string
+          ingredients: string[]
+          instructions: string[]
+          servings?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cook_time?: string | null
+          created_at?: string
+          cuisine?: string | null
+          difficulty?: string | null
+          id?: string
+          ingredients?: string[]
+          instructions?: string[]
+          servings?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_recipes: {
+        Row: {
+          created_at: string
+          id: string
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recipe_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_recipes_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

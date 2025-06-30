@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Clock, Users, ChefHat, BookOpen, Heart, Share2 } from "lucide-react";
+import { Clock, Users, ChefHat, BookOpen, Heart, Share2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Recipe {
@@ -18,17 +18,22 @@ interface Recipe {
 
 interface RecipeDisplayProps {
   recipe: Recipe;
+  onSave?: (recipe: Recipe) => void;
+  showSaveButton?: boolean;
 }
 
-const RecipeDisplay = ({ recipe }: RecipeDisplayProps) => {
+const RecipeDisplay = ({ recipe, onSave, showSaveButton = false }: RecipeDisplayProps) => {
   const { toast } = useToast();
 
   const handleSaveRecipe = () => {
-    toast({
-      title: "Recipe saved!",
-      description: "This recipe has been added to your collection.",
-    });
-    // TODO: Implement actual save functionality when Supabase is connected
+    if (onSave) {
+      onSave(recipe);
+    } else {
+      toast({
+        title: "Recipe saved!",
+        description: "This recipe has been added to your collection.",
+      });
+    }
   };
 
   const handleShareRecipe = () => {
@@ -36,7 +41,6 @@ const RecipeDisplay = ({ recipe }: RecipeDisplayProps) => {
       title: "Recipe copied!",
       description: "Recipe link copied to clipboard.",
     });
-    // TODO: Implement sharing functionality
   };
 
   return (
@@ -161,6 +165,15 @@ const RecipeDisplay = ({ recipe }: RecipeDisplayProps) => {
 
           {/* Action Footer */}
           <div className="flex justify-center mt-8 gap-4">
+            {showSaveButton && (
+              <Button 
+                onClick={() => onSave && onSave(recipe)}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8"
+              >
+                <Save className="mr-2" />
+                Save to Community
+              </Button>
+            )}
             <Button 
               onClick={handleSaveRecipe}
               className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-8"
