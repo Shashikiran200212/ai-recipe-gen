@@ -26,7 +26,6 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <span className="flex justify-center p-4 font-bold font-roboto">with 💜 by Shashi Kiran</span>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
