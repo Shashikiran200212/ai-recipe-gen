@@ -134,36 +134,57 @@ export const generateRecipe = async (
   cuisine?: string, 
   surprise: boolean = false
 ): Promise<Recipe> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  try {
+    const response = await fetch('https://vfmgnlwfktjcnckczfpm.functions.supabase.co/functions/v1/generate-recipe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ingredients,
+        cuisine,
+        surprise
+      }),
+    });
 
-  if (surprise) {
-    const randomRecipe = surpriseRecipes[Math.floor(Math.random() * surpriseRecipes.length)];
-    return randomRecipe;
-  }
-
-  // For demo purposes, we'll return a sample recipe
-  // In a real implementation, this would send ingredients and cuisine to an AI service
-  let selectedRecipe = sampleRecipes[Math.floor(Math.random() * sampleRecipes.length)];
-  
-  // If cuisine is specified, try to match it
-  if (cuisine) {
-    const matchingRecipe = sampleRecipes.find(recipe => 
-      recipe.cuisine?.toLowerCase().includes(cuisine.toLowerCase())
-    );
-    if (matchingRecipe) {
-      selectedRecipe = matchingRecipe;
+    if (!response.ok) {
+      throw new Error(`Failed to generate recipe: ${response.status}`);
     }
-  }
 
-  // Customize the recipe title to include some of the user's ingredients
-  if (ingredients.length > 0) {
-    const mainIngredient = ingredients[0];
-    selectedRecipe = {
-      ...selectedRecipe,
-      title: `${cuisine || 'Delicious'} ${mainIngredient} ${selectedRecipe.title.split(' ').pop()}`,
-    };
-  }
+    const recipe = await response.json();
+    
+    if (recipe.error) {
+      throw new Error(recipe.error);
+    }
 
-  return selectedRecipe;
+    return recipe;
+  } catch (error) {
+    console.error('Error generating recipe:', error);
+    // Fallback to sample recipes if AI fails
+    if (surprise) {
+      const randomRecipe = surpriseRecipes[Math.floor(Math.random() * surpriseRecipes.length)];
+      return randomRecipe;
+    }
+
+    let selectedRecipe = sampleRecipes[Math.floor(Math.random() * sampleRecipes.length)];
+    
+    if (cuisine) {
+      const matchingRecipe = sampleRecipes.find(recipe => 
+        recipe.cuisine?.toLowerCase().includes(cuisine.toLowerCase())
+      );
+      if (matchingRecipe) {
+        selectedRecipe = matchingRecipe;
+      }
+    }
+
+    if (ingredients.length > 0) {
+      const mainIngredient = ingredients[0];
+      selectedRecipe = {
+        ...selectedRecipe,
+        title: `${cuisine || 'Delicious'} ${mainIngredient} ${selectedRecipe.title.split(' ').pop()}`,
+      };
+    }
+
+    return selectedRecipe;
+  }
 };
