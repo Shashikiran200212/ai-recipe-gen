@@ -134,6 +134,8 @@ export const generateRecipe = async (
   cuisine?: string, 
   surprise: boolean = false
 ): Promise<Recipe> => {
+  console.log('Generating recipe with:', { ingredients, cuisine, surprise });
+  
   try {
     const response = await fetch('https://vfmgnlwfktjcnckczfpm.functions.supabase.co/functions/v1/generate-recipe', {
       method: 'POST',
@@ -147,11 +149,16 @@ export const generateRecipe = async (
       }),
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`Failed to generate recipe: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Error response:', errorText);
+      throw new Error(`Failed to generate recipe: ${response.status} - ${errorText}`);
     }
 
     const recipe = await response.json();
+    console.log('Generated recipe:', recipe);
     
     if (recipe.error) {
       throw new Error(recipe.error);
