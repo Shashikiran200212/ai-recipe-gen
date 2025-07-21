@@ -15,7 +15,11 @@ serve(async (req) => {
     const { ingredients, cuisine, surprise } = await req.json();
     const googleApiKey = Deno.env.get('GOOGLE_AI_API_KEY');
 
+    console.log('API Key exists:', !!googleApiKey);
+    console.log('Request data:', { ingredients, cuisine, surprise });
+
     if (!googleApiKey) {
+      console.error('Google AI API key not found in environment');
       throw new Error('Google AI API key not configured');
     }
 
@@ -78,8 +82,12 @@ Make sure to:
       }),
     });
 
+    console.log('Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Google AI API error: ${response.status}`);
+      const errorData = await response.text();
+      console.error('Google AI API error response:', errorData);
+      throw new Error(`Google AI API error: ${response.status} - ${errorData}`);
     }
 
     const data = await response.json();
